@@ -50,6 +50,7 @@ import RiwayatTransaksi from './RiwayatTransaksi';
 import Artikel from './Artikel';
 import DetailArtikel from './Artikel/detail';
 import DetailTransaksi from './RiwayatTransaksi/detialtransaksi';
+import PesanKamar from './PesanKamar';
 
 // NEW
 
@@ -105,7 +106,8 @@ ProdukDetail,
 RiwayatTransaksi,
 DetailTransaksi,
 Artikel,
-DetailArtikel
+DetailArtikel,
+PesanKamar,
 
 
 

@@ -104,6 +104,7 @@ import {
   RiwayatTransaksi,
   DetailArtikel,
   DetailTransaksi,
+  PesanKamar,
 } from '../pages';
 import {colors} from '../utils';
 import {Icon} from 'react-native-elements';
@@ -141,6 +142,15 @@ export default function Router() {
       <Stack.Screen
         name="Pelanggan"
         component={Pelanggan}
+        options={{
+          headerShown: false,
+        }}
+      />
+
+
+ <Stack.Screen
+        name="PesanKamar"
+        component={PesanKamar}
         options={{
           headerShown: false,
         }}

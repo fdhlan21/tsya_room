@@ -14,81 +14,61 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useIsFocused} from '@react-navigation/native';
 import axios from 'axios';
 import {apiURL, webURL} from '../../utils/localStorage';
+import { Icon } from 'react-native-elements';
 
 const {width} = Dimensions.get('window');
 
 export default function Home({navigation}) {
   const [user] = useState({});
-  const [featuredProducts, setProduct] = useState([
+
+  const menuItems = [
     {
       id: 1,
-      nama_kamar: 'Kamar Deluxe Single',
-      harga: 300000,
-      deskripsi: 'Kamar nyaman dengan kasur single, AC, TV, dan WiFi gratis. Cocok untuk 1 orang.',
-      foto_kamar: 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop&q=80',
-      fasilitas: ['AC', 'TV', 'WiFi', 'Kamar Mandi Dalam'],
-      kapasitas: 1,
-      status: 'tersedia'
+      title: 'Kamar',
+      subtitle: 'Booking kamar hotel',
+      iconName: 'bed',
+      color: ['#FF6B6B', '#FF8E8E'],
+      route: 'PesanKamar',
+      useImage: false
     },
     {
       id: 2,
-      nama_kamar: 'Kamar Deluxe Double',
-      harga: 450000,
-      deskripsi: 'Kamar luas dengan kasur double, AC, TV, meja kerja, dan WiFi gratis. Ideal untuk pasangan.',
-      foto_kamar: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=300&h=200&fit=crop&q=80',
-      fasilitas: ['AC', 'TV', 'WiFi', 'Meja Kerja', 'Kamar Mandi Dalam'],
-      kapasitas: 2,
-      status: 'tersedia'
+      title: 'Tiket Pesawat',
+      subtitle: 'Pesan tiket pesawat',
+      iconName: 'airplane',
+      color: ['#4ECDC4', '#6FE7DE'],
+      route: 'TiketPesawat',
+      useImage: false
     },
     {
       id: 3,
-      nama_kamar: 'Kamar Standard',
-      harga: 250000,
-      deskripsi: 'Kamar sederhana dengan fasilitas lengkap. Hemat namun tetap nyaman.',
-      foto_kamar: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?w=300&h=200&fit=crop&q=80',
-      fasilitas: ['AC', 'WiFi', 'Kamar Mandi Dalam'],
-      kapasitas: 1,
-      status: 'tersedia'
+      title: 'Tiket Kereta Api',
+      subtitle: 'Pesan tiket kereta',
+      iconName: 'train',
+      color: ['#45B7D1', '#7CC8E0'],
+      route: 'TiketKereta',
+      useImage: false
     },
     {
       id: 4,
-      nama_kamar: 'Kamar Suite',
-      harga: 800000,
-      deskripsi: 'Kamar mewah dengan ruang tamu terpisah, balkon, dan pemandangan kota.',
-      foto_kamar: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=300&h=200&fit=crop&q=80',
-      fasilitas: ['AC', 'TV LED', 'WiFi', 'Balkon', 'Kulkas', 'Sofa', 'Kamar Mandi Dalam'],
-      kapasitas: 2,
-      status: 'tersedia'
-    },
-  ]);
+      title: 'Whoosh',
+      subtitle: 'Kereta cepat Whoosh',
+      iconName: require('../../assets/icon_whoosh.png'),
+      color: ['#96CEB4', '#B5D8C7'],
+      route: 'Whoosh',
+      useImage: true
+    }
+  ];
 
-  const navigateToDetail = product => {
-    navigation.navigate('ProdukDetail', {product});
-  };
-
-  const getKamar = () => {
-    axios
-      .post(apiURL + 'listdata', {
-        modul: 'kamar',
-      })
-      .then(res => {
-        console.log(res.data);
-        setProduct(res.data);
-      })
-      .catch(error => {
-        console.log('Error fetching rooms:', error);
-        // Tetap gunakan data dummy jika API gagal
-      });
-  };
-
-  const formatPrice = (price) => {
-    return `Rp ${new Intl.NumberFormat('id-ID').format(price)}/malam`;
+  const handleMenuPress = (item) => {
+    // Navigate ke screen yang sesuai
+    navigation.navigate(item.route);
   };
 
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
-      getKamar();
+      // Bisa tambahkan logic lain jika diperlukan
     }
   }, [isFocused]);
 
@@ -116,46 +96,70 @@ export default function Home({navigation}) {
         contentContainerStyle={styles.scrollContainer}
         showsVerticalScrollIndicator={false}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Kamar Tersedia</Text>
-          <Text style={styles.sectionSubtitle}>Pilih kamar sesuai kebutuhan Anda</Text>
+          <Text style={styles.sectionTitle}>Menu Layanan</Text>
+          <Text style={styles.sectionSubtitle}>Pilih layanan yang Anda butuhkan</Text>
         </View>
 
-        <View style={styles.productsGrid}>
-          {featuredProducts.map(product => (
+        <View style={styles.menuGrid}>
+          {menuItems.map(item => (
             <TouchableOpacity
-              key={product.id_kamar || product.id}
-              style={styles.productCard}
-              onPress={() => navigateToDetail(product)}>
-              <View style={styles.cardContent}>
-                <FastImage
-                  source={{
-                    uri: product.foto_kamar || 'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=300&h=200&fit=crop&q=80',
-                  }}
-                  style={styles.productImage}
-                  resizeMode="cover"
-                  priority={FastImage.priority.normal}
-                />
-                <View style={styles.productInfo}>
-                  <Text style={styles.productName} numberOfLines={2}>
-                    {product.nama_kamar || product.nama_jasa}
-                  </Text>
-                  <Text style={styles.productPrice}>
-                    {formatPrice(product.harga)}
-                  </Text>
-                  {product.kapasitas && (
-                    <Text style={styles.capacityText}>
-                      Kapasitas: {product.kapasitas} orang
-                    </Text>
-                  )}
+              key={item.id}
+              style={styles.menuCard}
+              onPress={() => handleMenuPress(item)}>
+              <LinearGradient
+                colors={item.color}
+                style={styles.menuGradient}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 1}}>
+                <View style={styles.menuContent}>
+                  <View style={styles.iconContainer}>
+                    {item.useImage ? (
+                      <FastImage
+                        source={item.iconName}
+                        style={styles.menuIcon}
+                        resizeMode="contain"
+                        tintColor={colors.primary}
+                      />
+                    ) : (
+                      <Icon 
+                        type='ionicon'
+                        name={item.iconName} 
+                        size={40} 
+                        color={colors.primary} 
+                      />
+                    )}
+                  </View>
+                  <View style={styles.menuTextContainer}>
+                    <Text style={styles.menuTitle}>{item.title}</Text>
+                    <Text style={styles.menuSubtitle}>{item.subtitle}</Text>
+                  </View>
                 </View>
-                <View style={styles.statusBadge}>
-                  <Text style={styles.statusText}>
-                    {product.status === 'tersedia' ? 'Tersedia' : 'Penuh'}
-                  </Text>
-                </View>
-              </View>
+              </LinearGradient>
             </TouchableOpacity>
           ))}
+        </View>
+
+        {/* Info Section */}
+        <View style={styles.infoSection}>
+          <Text style={styles.infoTitle}>Kenapa Pilih Kami?</Text>
+          <View style={styles.infoList}>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoBullet}>✓</Text>
+              <Text style={styles.infoText}>Harga terjangkau dan transparan</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoBullet}>✓</Text>
+              <Text style={styles.infoText}>Booking mudah dan cepat</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoBullet}>✓</Text>
+              <Text style={styles.infoText}>Customer service 24/7</Text>
+            </View>
+            <View style={styles.infoItem}>
+              <Text style={styles.infoBullet}>✓</Text>
+              <Text style={styles.infoText}>Pembayaran aman dan terpercaya</Text>
+            </View>
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -210,70 +214,108 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-  productsGrid: {
+  menuGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
-    marginTop: 10,
+    paddingHorizontal: 20,
+    marginTop: 15,
   },
-  productCard: {
+  menuCard: {
     width: '48%',
-    backgroundColor: 'white',
-    borderRadius: 15,
     marginBottom: 15,
+    borderRadius: 10,
+    overflow: 'hidden',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  menuGradient: {
+    padding: 1,
+  },
+  menuContent: {
+    backgroundColor: 'white',
+    margin: 1,
+    borderRadius: 9,
+    padding: 15,
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 120,
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 10,
+    backgroundColor: 'rgba(255,255,255,0.3)',
+    marginBottom: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+  },
+  menuIcon: {
+    width: 70,
+    height: 70,
+    top:-1,
+    tintColor:colors.primary
+
+  },
+  menuTextContainer: {
+    alignItems: 'center',
+  },
+  menuTitle: {
+    fontFamily: fonts.secondary[700],
+    fontSize: 14,
+    color: colors.primary,
+    marginBottom: 3,
+    textAlign: 'center',
+  },
+  menuSubtitle: {
+    fontFamily: fonts.secondary[400],
+    fontSize: 10,
+    color: '#666',
+    textAlign: 'center',
+  },
+  infoSection: {
+    marginTop: 30,
+    paddingHorizontal: 20,
+    backgroundColor: 'white',
+    marginHorizontal: 20,
+    borderRadius: 15,
+    padding: 20,
     shadowColor: '#000',
     shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
-    overflow: 'hidden',
-    minHeight: 200,
   },
-  cardContent: {
-    flex: 1,
-    position: 'relative',
-  },
-  productImage: {
-    width: '100%',
-    height: 120,
-    resizeMode: 'cover',
-  },
-  productInfo: {
-    padding: 10,
-    flex: 1,
-    justifyContent: 'space-between',
-  },
-  productName: {
+  infoTitle: {
     fontFamily: fonts.secondary[700],
-    fontSize: 12,
+    fontSize: 16,
     color: colors.primary,
-    marginBottom: 5,
-    lineHeight: 16,
+    marginBottom: 15,
+    textAlign: 'center',
   },
-  productPrice: {
-    fontFamily: fonts.secondary[600],
-    fontSize: 11,
-    color: '#e74c3c',
-    marginBottom: 3,
+  infoList: {
+    // gap tidak didukung di React Native, menggunakan marginBottom
   },
-  capacityText: {
+  infoItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  infoBullet: {
+    fontSize: 14,
+    color: '#27ae60',
+    marginRight: 10,
+    fontWeight: 'bold',
+  },
+  infoText: {
     fontFamily: fonts.secondary[400],
-    fontSize: 10,
+    fontSize: 13,
     color: '#666',
-  },
-  statusBadge: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    backgroundColor: '#27ae60',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 8,
-  },
-  statusText: {
-    fontFamily: fonts.secondary[600],
-    fontSize: 8,
-    color: 'white',
+    flex: 1,
   },
 });

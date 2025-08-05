@@ -58,7 +58,7 @@ export default function Register({navigation, route}) {
             marginTop: 0,
           }}>
           <Image
-            source={require('../../assets/logo.png')}
+            source={require('../../assets/logologin.png')}
             style={{
               width: 200,
               height: 200,
